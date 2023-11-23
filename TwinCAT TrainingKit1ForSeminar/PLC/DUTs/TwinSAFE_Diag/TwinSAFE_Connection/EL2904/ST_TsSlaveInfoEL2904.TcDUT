@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <DUT Name="ST_TsSlaveInfoEL2904" Id="{942a9a8b-a83b-4dbd-b646-c0462808736e}">
+    <Declaration><![CDATA[TYPE ST_TsSlaveInfoEL2904 :
+STRUCT
+
+(* act_EcSlaveIdentify *)
+	sEcSlaveType							:STRING(15);
+	sEcSlaveName							:STRING(31) := '';
+	bSlaveIdentify							:BOOL;
+	bSlaveTypeError							:BOOL;
+
+	stTsSlaveAddress 						:ST_TsSlaveAddress;
+	bSlaveAddressOk							:BOOL;	
+	
+	nEcSlaveFSoEAddr						:UINT;
+	nEcSlaveSerialNumber					:UDINT;
+	
+(* act_ConnectionState *)
+	sState									:STRING;
+	
+(* act_ConnectionDiag *)
+	sDiag									:STRING;
+	sFault									:STRING(255);					(* FailSafe Error (Hardware)*)
+	bError									:BOOL;							(* TwinSAFE-Error *)
+
+(* act_ReadDiagObjects *)
+	stSlaveTemp								:ST_TsSlave3Temp;
+	bIntTempWarning1						:BOOL;							(* Temperature warning: T1 *)
+	bIntTempWarning2						:BOOL;							(* Temperature warning: T2 *)
+	bWarningLevelTempOutputs				:BOOL;							(* Temperature 2 [°C] *)
+	stTsDiagObjectsBitsEL2904				:ST_TsDiagObjectsBitsEL2904;
+	
+(* act_Signals *)
+	bChannel1								:BOOL;							
+	bChannel2								:BOOL;
+	bChannel3								:BOOL;
+	bChannel4								:BOOL;	
+
+END_STRUCT
+END_TYPE
+(*End*)]]></Declaration>
+  </DUT>
+</TcPlcObject>

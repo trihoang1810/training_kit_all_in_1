@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.5">
+  <POU Name="FB_TwinSafeConnectionEL6910" Id="{e5789f18-5bb1-4a88-9a21-deca5ba14732}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TwinSafeConnectionEL6910
+(*******************************************************************************************************
+Description			:	Evaluate a TwinSAFE connection status and diagnosis to an EtherCAT terminal
+Supported terminals : 	EL6910
+Documentation 		:	EL6910 TwinSAFE master terminal 
+Version/Date 		:	V1.5.2/02.10.2015
+Required libraries 	: 	TcSystem.lib (Tc2_System), TcEtherCAT.lib (Tc2_EtherCAT)
+********************************************************************************************************)
+VAR_INPUT
+	
+	tCoEReadCycle							:TIME 	:= T#0MS;				(* Read cycle CoE-Data, e.g. temperature *)
+
+END_VAR
+VAR_OUTPUT
+
+	stEcAdsAddr						AT %I*	:ST_AdsAddr;					(* [TwinSAFE logic] e.g. EL69xx \ Connection Info Data \ [Path] Info Data*)
+	nEcSlaveState					AT %I*	:UINT ;							(* EL6910 \ InfoData \ State *)
+	
+	stTsSlaveInfo							:ST_TsSlaveInfoEL6910;
+
+END_VAR
+VAR
+
+(* act_ReadDiagObjects *)
+	eReadDiagObjState						:E_TsCycleDiagObj;
+	eReadDiagObjErrStep						:E_TsCycleDiagObj := E_TsCycleDiagObj.eCycleDiagObj_NoError;
+	bReadDiagObjError						:BOOL;							(* Error in the diagnosis objects read cycle *)  
+	bReadDiagObjReset						:BOOL;							(* Reset the diagnosis objects read cycle error *)
+	fbTimer									:TON;
+	fbEcCoeSdoRead							:FB_EcCoESdoReadEx;
+
+(* act_EcSlaveIdentify *)
+	fbEcGetSlaveName						:FB_EcGetSlaveName;
+
+END_VAR
+VAR CONSTANT
+	
+(* act_ReadDiagObjects *)
+	nWarningLevelTempC1						:INT	:= 85;					(* Temperature C1 warning level [°C] *)
+	nWarningLevelTempC2						:INT	:= 85;					(* Temperature C2 warning level [°C] *)
+
+END_VAR
+(* End *)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Function Block TwinSAFE connection status and diagnosis for EL6910 Terminals *)
+
+(* THIS CODE IS ONLY AN EXAMPLE - YOU HAVE TO CHECK APTITUDE FOR YOUR APPLICATION *)
+
+	(* Identify the EtherCAT slave *)
+		act_EcSlaveIdentify();
+
+	(* Evaluate the Terminal temperatures and diagnostic objects *)
+		IF stTsSlaveInfo.bSlaveIdentify
+			AND stTsSlaveInfo.bSlaveAddressOk
+		THEN
+			act_ReadDiagObjects();
+		ELSE
+			eReadDiagObjState := E_TsCycleDiagObj.eCycleDiagObj_Init;
+		END_IF
+	
+(* End *)]]></ST>
+    </Implementation>
+    <Action Name="act_EcSlaveIdentify" Id="{a76d1e30-f5ae-4f16-9a3c-7766c911415e}">
+      <Implementation>
+        <ST><![CDATA[(* Identify the EtherCAT slave *)
+
+	IF NOT nEcSlaveState.3
+	THEN
+		stTsSlaveInfo.bSlaveIdentify  		:= FALSE;
+		stTsSlaveInfo.bSlaveTypeError 		:= FALSE;
+		stTsSlaveInfo.sEcSlaveType   		:= '';
+		stTsSlaveInfo.bSlaveAddressOk 		:= FALSE;
+		stTsSlaveInfo.nEcSlaveFSoEAddr 		:= 0;
+		stTsSlaveInfo.nEcSlaveSerialNumber	:= 0;
+		stTsSlaveInfo.nEcSlaveProjectCRC	:= 0;
+	END_IF
+
+	IF nEcSlaveState.3
+		AND NOT stTsSlaveInfo.bSlaveIdentify
+		AND NOT stTsSlaveInfo.bSlaveTypeError
+ 		AND F_CreateAmsNetId(stEcAdsAddr.netId) <> '0.0.0.0.0.0' 
+		AND stEcAdsAddr.port <> 0
+	THEN
+
+		fbEcCoeSdoRead(
+			sNetId			:= 	F_CreateAmsNetId(stEcAdsAddr.netId),
+			nSlaveAddr		:= 	stEcAdsAddr.port,
+			nSubIndex		:= 	0,
+			nIndex			:= 	16#1008,
+			pDstBuf			:= 	ADR(stTsSlaveInfo.sEcSlaveType),
+			cbBufLen		:= 	SIZEOF(stTsSlaveInfo.sEcSlaveType),
+			bExecute		:= 	TRUE,
+			tTimeout		:= 	DEFAULT_ADS_TIMEOUT);
+	
+
+		fbEcGetSlaveName(
+			bExecute		:=	TRUE, 
+			sNetId			:=	F_CreateAmsNetId(stEcAdsAddr.netId), 
+			nSlaveAddr		:=	stEcAdsAddr.port, 
+			tTimeout		:=	DEFAULT_ADS_TIMEOUT, 
+			bBusy			=>	, 
+			sSlaveName		=>	stTsSlaveInfo.sEcSlaveName, 
+			bError			=>	, 
+			nErrId			=>	);
+
+		IF NOT fbEcCoeSdoRead.bBusy
+			AND NOT fbEcCoeSdoRead.bError
+			AND NOT fbEcGetSlaveName.bBusy
+			AND NOT fbEcGetSlaveName.bError
+		THEN
+		
+			fbEcCoeSdoRead(bExecute := FALSE); 
+			fbEcGetSlaveName(bExecute := FALSE); 
+
+			IF stTsSlaveInfo.sEcSlaveType = 'EL6910' 
+				AND fbEcGetSlaveName.sSlaveName <> ''
+			THEN
+				stTsSlaveInfo.bSlaveIdentify := TRUE;
+			ELSE
+				stTsSlaveInfo.bSlaveTypeError := TRUE;
+			END_IF
+
+		ELSIF NOT fbEcCoeSdoRead.bBusy
+			AND fbEcCoeSdoRead.bError
+		OR (NOT fbEcGetSlaveName.bBusy
+			AND fbEcGetSlaveName.bError)
+		THEN
+			fbEcCoeSdoRead(bExecute := FALSE); 
+			fbEcGetSlaveName(bExecute := FALSE); 
+		END_IF
+
+	END_IF
+	
+
+	IF nEcSlaveState.3
+		AND stTsSlaveInfo.bSlaveIdentify
+			AND NOT stTsSlaveInfo.bSlaveAddressOk
+	THEN
+		// Read slave FSoE Address  (F980:01)
+		// Read slave serial number (F980:02)
+		// Read slave project CRC 	(F980:03)
+
+			fbEcCoeSdoRead(
+				sNetId			:= 	F_CreateAmsNetId(stEcAdsAddr.netId),
+				nSlaveAddr		:= 	stEcAdsAddr.port,
+				nSubIndex		:= 	1,
+				nIndex			:= 	16#F980,
+				pDstBuf			:= 	ADR(stTsSlaveInfo.stTsSlaveAddress),
+				cbBufLen		:= 	SIZEOF(stTsSlaveInfo.stTsSlaveAddress),
+				bExecute		:= 	TRUE,
+				tTimeout		:= 	DEFAULT_ADS_TIMEOUT,
+				bCompleteAccess	:= 	TRUE);
+
+			IF NOT fbEcCoeSdoRead.bBusy 
+				AND NOT fbEcCoeSdoRead.bError 
+			THEN
+				fbEcCoeSdoRead(bExecute := FALSE);
+				stTsSlaveInfo.nEcSlaveFSoEAddr 		:= stTsSlaveInfo.stTsSlaveAddress.nEcSlaveFSoEAddr;
+				stTsSlaveInfo.nEcSlaveSerialNumber 	:= TO_UDINT(stTsSlaveInfo.stTsSlaveAddress.nEcSlaveSerialNumber[0] OR SHL(TO_DWORD(stTsSlaveInfo.stTsSlaveAddress.nEcSlaveSerialNumber[1]),16));
+				stTsSlaveInfo.nEcSlaveProjectCRC	:= stTsSlaveInfo.stTsSlaveAddress.nEcSlaveProjectCRC;
+				stTsSlaveInfo.bSlaveAddressOk 		:= TRUE;
+			ELSIF NOT fbEcCoeSdoRead.bBusy 
+				AND fbEcCoeSdoRead.bError 
+			THEN
+				fbEcCoeSdoRead(bExecute := FALSE);
+				stTsSlaveInfo.nEcSlaveFSoEAddr 		:= 0;
+				stTsSlaveInfo.nEcSlaveSerialNumber 	:= 0;
+				stTsSlaveInfo.nEcSlaveProjectCRC 		:= 0;
+			END_IF	
+	
+	END_IF
+	
+(* End *)]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="act_ReadDiagObjects" Id="{c65e243c-d336-493f-8e5c-2dc66a48d030}">
+      <Implementation>
+        <ST><![CDATA[(* Evaluate the Terminal temperatures and diagnostic objects *)
+
+	CASE eReadDiagObjState OF
+
+		eCycleDiagObj_Init				:	(* Init *)	
+
+			IF nEcSlaveState.3					(* Slave in OP *)
+				AND tCoEReadCycle <> T#0MS 		(* tCoEReadCycle <> t#0ms -> Read diagnostic aktiv *)
+			THEN
+				bReadDiagObjError := FALSE;
+				fbEcCoeSdoRead(	bExecute := FALSE);
+				fbTimer(IN := FALSE);
+				eReadDiagObjState := eCycleDiagObj_ReadTemperatureC1;
+			END_IF
+
+			
+		eCycleDiagObj_ReadTemperatureC1	:	(* Read temperature C1 *)
+
+			fbEcCoeSdoRead(
+				sNetId			:= 	F_CreateAmsNetId(stEcAdsAddr.netId),
+				nSlaveAddr		:= 	stEcAdsAddr.port,
+				nSubIndex		:= 	1,
+				nIndex			:= 	16#F984,
+				pDstBuf			:= 	ADR(stTsSlaveInfo.stDeviceInfoDataC1),
+				cbBufLen		:= 	SIZEOF(stTsSlaveInfo.stDeviceInfoDataC1),
+				bExecute		:= 	TRUE,
+				tTimeout		:= 	DEFAULT_ADS_TIMEOUT,
+				bCompleteAccess	:= 	TRUE);
+
+			IF NOT fbEcCoeSdoRead.bBusy 
+				AND NOT fbEcCoeSdoRead.bError 
+			THEN
+				fbEcCoeSdoRead(bExecute := FALSE);
+				eReadDiagObjState := eCycleDiagObj_ReadTemperatureC2;
+			ELSIF NOT fbEcCoeSdoRead.bBusy 
+				AND fbEcCoeSdoRead.bError 
+			THEN
+				eReadDiagObjErrStep := eReadDiagObjState;
+				eReadDiagObjState 	:= eCycleDiagObj_Error;
+			END_IF
+
+			
+		eCycleDiagObj_ReadTemperatureC2	:	(* Read temperature C2 *)
+
+			fbEcCoeSdoRead(
+				sNetId			:= 	F_CreateAmsNetId(stEcAdsAddr.netId),
+				nSlaveAddr		:= 	stEcAdsAddr.port,
+				nSubIndex		:= 	1,
+				nIndex			:= 	16#F985,
+				pDstBuf			:= 	ADR(stTsSlaveInfo.stDeviceInfoDataC2),
+				cbBufLen		:= 	SIZEOF(stTsSlaveInfo.stDeviceInfoDataC2),
+				bExecute		:= 	TRUE,
+				tTimeout		:= 	DEFAULT_ADS_TIMEOUT,
+				bCompleteAccess	:= 	TRUE);
+
+			IF NOT fbEcCoeSdoRead.bBusy 
+				AND NOT fbEcCoeSdoRead.bError 
+			THEN
+				fbEcCoeSdoRead(bExecute := FALSE);
+				eReadDiagObjState := eCycleDiagObj_ReadDelay;
+			ELSIF NOT fbEcCoeSdoRead.bBusy 
+				AND fbEcCoeSdoRead.bError 
+			THEN
+				eReadDiagObjErrStep := eReadDiagObjState;
+				eReadDiagObjState 	:= eCycleDiagObj_Error;
+			END_IF
+
+			
+		eCycleDiagObj_ReadDelay		:	(* Read delay *)
+			fbTimer(
+				IN := TRUE, 
+				PT := tCoEReadCycle);
+
+			IF fbTimer.Q 
+			THEN
+				fbTimer(IN := FALSE); 			
+				eReadDiagObjState := eCycleDiagObj_Done;
+			END_IF
+
+			
+		eCycleDiagObj_Done				:	(* Done *)
+
+			eReadDiagObjState := eCycleDiagObj_Init;
+
+			
+		eCycleDiagObj_Error			:	(* Error detected *)
+
+			bReadDiagObjError := TRUE;
+		
+			IF bReadDiagObjReset
+			THEN
+				bReadDiagObjError := FALSE;
+				fbEcCoeSdoRead(bExecute := FALSE);
+				eReadDiagObjErrStep := E_TsCycleDiagObj.eCycleDiagObj_NoError;
+				eReadDiagObjState := eCycleDiagObj_Init;
+			END_IF
+
+	ELSE
+		
+		eReadDiagObjState := eCycleDiagObj_Init;
+		
+	END_CASE
+
+	stTsSlaveInfo.bIntTempWarning1 := stTsSlaveInfo.stDeviceInfoDataC1.nTemperatureC >= nWarningLevelTempC1; 
+	stTsSlaveInfo.bIntTempWarning2 := stTsSlaveInfo.stDeviceInfoDataC2.nTemperatureC >= nWarningLevelTempC2;
+
+(* End *)]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="FB_TwinSafeConnectionEL6910">
+      <LineId Id="3" Count="6" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="21" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TwinSafeConnectionEL6910.act_EcSlaveIdentify">
+      <LineId Id="2" Count="6" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="119" Count="2" />
+      <LineId Id="9" Count="52" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="65" Count="2" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="83" Count="15" />
+      <LineId Id="106" Count="1" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="100" Count="2" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="110" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TwinSafeConnectionEL6910.act_ReadDiagObjects">
+      <LineId Id="2" Count="39" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="112" Count="23" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="73" Count="35" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

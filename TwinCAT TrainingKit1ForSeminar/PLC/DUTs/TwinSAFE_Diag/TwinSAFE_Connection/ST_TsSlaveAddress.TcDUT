@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_TsSlaveAddress" Id="{e2d37c8c-7f56-4cd5-a9a5-12833d0335f3}">
+    <Declaration><![CDATA[TYPE ST_TsSlaveAddress :
+(*******************************************************************************************************
+Description			:	EtherCAT Slaves Address information
+Supported terminals : 	EL1904, EL2904
+Date 				:	25.05.2018
+********************************************************************************************************)
+STRUCT
+
+	nEcSlaveFSoEAddr						:UINT;
+	nEcSlaveSerialNumber					:ARRAY[0..1] OF WORD;
+
+END_STRUCT
+END_TYPE
+(* End *)
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

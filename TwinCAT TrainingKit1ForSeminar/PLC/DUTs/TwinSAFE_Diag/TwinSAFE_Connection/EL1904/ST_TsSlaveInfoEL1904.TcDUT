@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <DUT Name="ST_TsSlaveInfoEL1904" Id="{6e764d6a-7201-4343-99db-588ce8aca66c}">
+    <Declaration><![CDATA[TYPE ST_TsSlaveInfoEL1904 :
+STRUCT
+
+(* act_EcSlaveIdentify *)
+	sEcSlaveType							:STRING(15);
+	sEcSlaveName							:STRING(31) := '';
+	bSlaveIdentify							:BOOL;
+	bSlaveTypeError							:BOOL;
+
+	stTsSlaveAddress 						:ST_TsSlaveAddress;
+	bSlaveAddressOk							:BOOL;
+
+	nEcSlaveFSoEAddr						:UINT;
+	nEcSlaveSerialNumber					:UDINT;
+
+(* act_ConnectionState *)
+	sState									:STRING;
+	
+(* act_ConnectionDiag *)
+	sDiag									:STRING;
+	sFault									:STRING;						(* FailSafe Error (Hardware)*)
+	bError									:BOOL;							(* TwinSAFE-Error *)
+
+(* act_ReadDiagObjects *)
+	stSlaveTemp								:ST_TsSlave2Temp;
+	bIntTempWarning1						:BOOL;							(* Temperature warning: T1 *)
+	bIntTempWarning2						:BOOL;							(* Temperature warning: T2 *)
+	stTsDiagObjectsBitsEL1904				:ST_TsDiagObjectsBitsEL1904;
+
+	
+(* act_Signals *)
+	bChannel1								:BOOL;							
+	bChannel2								:BOOL;
+	bChannel3								:BOOL;
+	bChannel4								:BOOL;
+
+END_STRUCT
+END_TYPE
+(* End *)]]></Declaration>
+  </DUT>
+</TcPlcObject>

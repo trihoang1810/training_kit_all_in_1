@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.5">
+  <DUT Name="ST_TsDeviceInfoDataC" Id="{92c6d732-0bb9-449b-8621-400f61d7a79c}">
+    <Declaration><![CDATA[TYPE ST_TsDeviceInfoDataC :
+(*******************************************************************************************************
+Description			:	EtherCAT master terminals device info controller
+Supported terminals : 	EL6910
+Date 				:	25.05.2018
+********************************************************************************************************)
+STRUCT
+
+	nVoltageC						:UINT;	(* Voltage controller [mV] *)
+	nTemperatureC					:INT;	(* Temperature controller [°C] *)
+	FirmwareCRC						:UINT;	(**)
+	VendordataCRC					:UINT;	(**)
+END_STRUCT
+END_TYPE
+(* End *)]]></Declaration>
+  </DUT>
+</TcPlcObject>

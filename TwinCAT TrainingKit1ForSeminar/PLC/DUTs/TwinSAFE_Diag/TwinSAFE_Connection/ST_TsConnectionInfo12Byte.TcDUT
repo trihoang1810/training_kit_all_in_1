@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_TsConnectionInfo12Byte" Id="{e2498894-51b2-44f9-a769-dd67a56da6eb}">
+    <Declaration><![CDATA[TYPE ST_TsConnectionInfo12Byte :
+(*******************************************************************************************************
+Description			:	Connection information data of EtherCAT Slaves with 12 byte safe data   
+Supported terminals : 	EK1960
+Date 				:	04.11.2018
+********************************************************************************************************)
+STRUCT
+
+	nState  								:USINT;
+	nDiag 	 								:USINT;
+	
+	nInOutSafeDataByte1	 					:BYTE;
+	nInOutSafeDataByte2	 					:BYTE;
+	nInOutSafeDataByte3	 					:BYTE;
+	nInOutSafeDataByte4 					:BYTE;
+	nInOutSafeDataByte5 					:BYTE;
+	nInOutSafeDataByte6 					:BYTE;
+	nInOutSafeDataByte7 					:BYTE;
+	nInOutSafeDataByte8 					:BYTE;
+	nInOutSafeDataByte9 					:BYTE;
+	nInOutSafeDataByte10					:BYTE;
+	nInOutSafeDataByte11					:BYTE;
+	nInOutSafeDataByte12					:BYTE;
+
+END_STRUCT
+END_TYPE
+(* End *)]]></Declaration>
+  </DUT>
+</TcPlcObject>

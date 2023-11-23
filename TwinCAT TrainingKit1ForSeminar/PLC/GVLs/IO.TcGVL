@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="IO" Id="{1cc08972-c28c-4917-8094-59516c60416f}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	bButton1 AT %I* : BOOL;
+	bButton2 AT %I* : BOOL;
+	bButton3 AT %I* : BOOL;
+	bButton4 AT %I* : BOOL;
+	bLed1 AT %Q* : BOOL;
+	bLed2 AT %Q* : BOOL;
+	bLed3 AT %Q* : BOOL;
+	bLed4 AT %Q* : BOOL;
+	nSpeedCmd AT %I* : INT;
+	nPotentiometer AT %Q* : INT;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

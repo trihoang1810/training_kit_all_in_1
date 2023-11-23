@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_Safety" Id="{3516b99c-fdd8-4343-9551-c57034318870}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Safety
+VAR
+	ErrAck AT %Q* 	: BOOL;
+	RstEstop AT %Q* : BOOL;
+	RunStop AT %Q* 	: BOOL;
+	ComErr AT %I* 	: BOOL;
+	FbErr AT %I* 	: BOOL;
+	OutErr AT %I* 	: BOOL;
+	
+	a : R_TRIG;
+	ncounter:INT:=0;
+	
+	//=== TwinSAFE Diagnostic ===//
+	// target system
+		wProjectCrc 	AT %I*	: WORD;
+		idiSerialnumber AT %I* 	: UDINT;
+	//Group 1
+		fbTsGroup_1			: FB_TwinSafeGroupExt;
+		stTsGroupInfo		: ST_TsGroupInfo;
+	//TwinSAFE Connection
+		fbTsConnection_EL6910	: FB_TwinSafeConnectionEL6910;
+		fbTsConnection_EL1904	: FB_TwinSafeConnectionEL1904;
+		fbTsConnection_EL2904	: FB_TwinSafeConnectionEL2904;
+	//Twinsafe function block
+		fbTsFB_Estop1			: FB_TwinSafeFB;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[a(CLK:=IO.bButton4 , Q=> );
+IF a.Q THEN
+	ncounter:=ncounter+1;
+	IF ncounter >1 THEN
+		ncounter:=0;
+		IO.bLed2:= TRUE;
+
+	END_IF
+END_IF
+
+IF ncounter = 1 THEN
+	RunStop:=TRUE;
+	IO.bLed2:= TRUE;
+
+ELSE 
+	RunStop:=FALSE;
+	IO.bLed2:= FALSE;
+END_IF
+
+//Diagnostic
+//TwinSAFE (Group 1)
+fbTsGroup_1(
+	bRun:= IO.bButton4, 
+	bErrAck:= ErrAck, 
+	sName:= 'Gr01_Estop');
+//TwinSAFE connection
+fbTsConnection_EL6910(tCoEReadCycle :=T#2S);
+fbTsConnection_EL1904(tCoEReadCycle	:=T#2S) ;
+fbTsConnection_EL2904(tCoEReadCycle	:=T#2S);
+//Twinsafe Function Block
+fbTsFB_Estop1(
+	sName:= 'FBEstop1', 
+	eFBType:= E_TsFbType.FB_TYPE_ESTOP, 
+	nFbId:= 1);]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Safety">
+      <LineId Id="7" Count="4" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="12" Count="4" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="18" Count="11" />
+      <LineId Id="32" Count="3" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

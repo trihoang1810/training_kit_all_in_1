@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_TsConnectionInfo4Byte" Id="{dbe3315d-bb74-4143-b3ad-3d43530df1b0}">
+    <Declaration><![CDATA[TYPE ST_TsConnectionInfo4Byte :
+(*******************************************************************************************************
+Description			:	Connection information data of EtherCAT Slaves with 2 byte input and 2 byte output safe data  
+Supported terminals : 	EP1957
+Date 				:	04.11.2018
+********************************************************************************************************)
+STRUCT
+
+	nState  								:USINT;
+	nDiag 	 								:USINT;
+	nInOutSafeDataByte1						:BYTE;
+	nInOutSafeDataByte2						:BYTE;
+	nInOutSafeDataByte3						:BYTE;
+	nInOutSafeDataByte4						:BYTE;
+
+END_STRUCT
+END_TYPE
+(* End *)]]></Declaration>
+  </DUT>
+</TcPlcObject>

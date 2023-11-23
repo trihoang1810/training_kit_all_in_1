@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{c68557e9-d255-42aa-8e04-c3eae67d9a27}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	nServoSpeed : DINT;
+	
+	AxisB : AXIS_REF;
+	bSafetyCondition: BOOL;
+	McPower : MC_Power;
+	McReset : MC_Reset;
+	McJogging : MC_Jog;
+	McVelo : MC_MoveVelocity;
+	McStop : MC_Stop;
+	bVirtualMoveVelo : BOOL;
+	bVirtualStop : BOOL;
+	
+	
+	iState : INT; // my state
+	nLastThrottle : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bSafetyCondition:= PRG_Safety.fbTsConnection_EL2904.stTsSlaveInfo.bChannel1;
+
+IF (IO.bButton1 OR bVirtualMoveVelo) AND bSafetyCondition THEN
+	IO.bLed1:= TRUE;
+END_IF
+
+IF (IO.bButton2 OR bVirtualStop) OR NOT bSafetyCondition THEN
+	IO.bLed1:=FALSE;
+END_IF
+
+IO.nPotentiometer := IO.nSpeedCmd;
+nServoSpeed := F_Scale(nAIn:= IO.nSpeedCmd, 100.0, 2800.0, 0, 32767);
+
+// Drive Control
+AxisB.ReadStatus();
+McPower(Axis:=AxisB,Enable:= TRUE, Enable_Positive:= TRUE, Enable_Negative:=TRUE);
+McReset(Axis:=AxisB);
+McJogging(Axis:=AxisB);
+
+CASE iState OF
+	0:
+		iState:= 10; //initial
+	10: // Start drive reset
+		IF McPower.Status THEN
+			McReset(Axis:= AxisB, Execute:=TRUE);
+			IF McReset.Done THEN
+				iState:=20;
+			ELSIF McReset.Error THEN
+				iState:=-999;		
+			END_IF
+		END_IF
+			
+	20: // Wait for drive to reset
+		IF McPower.Status THEN
+			iState:=30;
+		END_IF
+	30: // Wait for drive command
+		//McJogging(Axis:=AxisB, JogForward := IO.bLed1);
+		McVelo(
+			Axis:= AxisB,
+			Execute:= IO.bLed1 AND IO.nSpeedCmd <> nLastThrottle,
+			Velocity:= nServoSpeed,
+			Acceleration := 10000,
+			Deceleration := 10000,
+			Jerk := 10000000,
+			Direction:= MC_DIRECTION.MC_Positive_Direction
+		);
+		IF NOT IO.bLed1 OR NOT bSafetyCondition THEN
+			McVelo(Axis:=AxisB, Execute:= FALSE);
+			iState:=900;
+		END_IF
+		nLastThrottle := IO.nSpeedCmd;
+	900: // Stop Servo
+		McStop(Axis:= AxisB, Execute:= TRUE);
+		IF IO.bLed1 AND bSafetyCondition THEN
+			McStop(Axis:= AxisB, Execute:= FALSE);
+			iState:=30;
+		END_IF
+	-999: // Handle error
+END_CASE
+
+
+PRG_Safety();
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="132" Count="1" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="122" Count="3" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="56" Count="2" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="65" Count="9" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="77" Count="1" />
+      <LineId Id="81" Count="1" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="25" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

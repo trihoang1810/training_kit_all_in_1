@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <DUT Name="ST_TsConnectionInfo8Byte" Id="{ff461f24-db84-4962-9a66-e7fa4ed846ac}">
+    <Declaration><![CDATA[TYPE ST_TsConnectionInfo8Byte :
+(*******************************************************************************************************
+Description			:	Connection information data of EtherCAT Slaves with 4 byte input and 4 byte output safe data  
+Supported terminals : 	AX5805(2 Axis)
+Date 				:	04.11.2018
+********************************************************************************************************)
+STRUCT
+
+	nState  								:USINT;
+	nDiag 	 								:USINT;
+	nInOutSafeDataByte1						:BYTE;
+	nInOutSafeDataByte2						:BYTE;
+	nInOutSafeDataByte3						:BYTE;
+	nInOutSafeDataByte4						:BYTE;
+	nInOutSafeDataByte5 					:BYTE;
+	nInOutSafeDataByte6 					:BYTE;
+	nInOutSafeDataByte7 					:BYTE;
+	nInOutSafeDataByte8 					:BYTE;
+
+END_STRUCT
+END_TYPE
+(* End *)]]></Declaration>
+  </DUT>
+</TcPlcObject>

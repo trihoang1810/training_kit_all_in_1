@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8d1b5a47-54cc-4e96-8932-0ecb8268fe56}</ProjectGuid>
+    <SubObjectsSortedByName>True</SubObjectsSortedByName>
+    <DownloadApplicationInfo>true</DownloadApplicationInfo>
+    <WriteProductVersion>true</WriteProductVersion>
+    <GenerateTpy>false</GenerateTpy>
+    <Name>PLC</Name>
+    <ProgramVersion>3.1.4024.0</ProgramVersion>
+    <Application>{01a777c3-8fd1-448f-bde2-24d714b70a79}</Application>
+    <TypeSystem>{289ac33b-62e6-42a4-a077-e1f92e1d913a}</TypeSystem>
+    <Implicit_Task_Info>{f3ee1954-9ba0-45fe-b978-47741939546d}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{29951d90-63ba-4fde-a82b-03494c3e915b}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{03835470-53cd-4a20-9a52-a56b84c006ec}</Implicit_Jitter_Distribution>
+    <LibraryReferences>{1ef2a606-29a9-41ec-9e57-daa2479e6ac1}</LibraryReferences>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="DUTs\EtherCAT_Diag\E_EcDiacStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\EtherCAT_Diag\E_EcGetSlaveName.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\EtherCAT_Diag\E_EcSystemStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\EtherCAT_Diag\ST_EcTerminalDiagInfo.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\ST_AdsAddr.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL1904\ST_TsConnectionInfoEL1904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL1904\ST_TsDiagObjectsBitsEL1904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL1904\ST_TsDiagObjectsEL1904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL1904\ST_TsSlaveInfoEL1904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL2904\ST_TsConnectionInfoEL2904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL2904\ST_TsDiagObjectsBitsEL2904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL2904\ST_TsDiagObjectsEL2904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL2904\ST_TsSlaveInfoEL2904.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL6910\ST_TsDeviceInfoDataC.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL6910\ST_TsSlaveInfoEL6910.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\E_TsCycleDiagObj.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsConnectionInfo12Byte.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsConnectionInfo1Byte.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsConnectionInfo2Byte.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsConnectionInfo4Byte.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsConnectionInfo8Byte.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsSlave2Temp.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsSlave3Temp.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsSlaveAddress.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\ST_TsSlaveAddressCRC.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Functionblocks\E_TsFbType.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Functionblocks\ST_TsFbInfo.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TwinSAFE_Diag\TwinSAFE_Group\ST_TsGroupInfo.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GVLs\IO.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_EcGetSlaveName.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeConnectionEL1904.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeConnectionEL2904.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeConnectionEL6910.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeFB.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeGroup.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_TwinSafeGroupExt.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\F_Scale.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PRG_Safety.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DUTs" />
+    <Folder Include="DUTs\EtherCAT_Diag" />
+    <Folder Include="DUTs\TwinSAFE_Diag" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL1904" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL2904" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Connection\EL6910" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Functionblocks" />
+    <Folder Include="DUTs\TwinSAFE_Diag\TwinSAFE_Group" />
+    <Folder Include="GVLs" />
+    <Folder Include="VISUs" />
+    <Folder Include="POUs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PlaceholderReference Include="Tc2_EtherCAT">
+      <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_MC2">
+      <DefaultResolution>Tc2_MC2, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_MC2</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_NC">
+      <DefaultResolution>Tc2_NC, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_NC</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_Standard">
+      <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Standard</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_Utilities">
+      <DefaultResolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Utilities</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc3_Module">
+      <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PLC.tmc">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <PlcProjectOptions>
+      <XmlArchive>
+  <Data>
+    <o xml:space="preserve" t="OptionKey">
+      <v n="Name">"&lt;ProjectRoot&gt;"</v>
+      <d n="SubKeys" t="Hashtable" />
+      <d n="Values" t="Hashtable" />
+    </o>
+  </Data>
+  <TypeList>
+    <Type n="Hashtable">System.Collections.Hashtable</Type>
+    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+    <Type n="String">System.String</Type>
+  </TypeList>
+</XmlArchive>
+    </PlcProjectOptions>
+  </ProjectExtensions>
+</Project>

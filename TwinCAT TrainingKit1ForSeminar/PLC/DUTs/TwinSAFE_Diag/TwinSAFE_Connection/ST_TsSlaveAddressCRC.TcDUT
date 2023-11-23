@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ST_TsSlaveAddressCRC" Id="{6f5fe30f-e3a3-495b-8e16-2da8a6f647d9}">
+    <Declaration><![CDATA[TYPE ST_TsSlaveAddressCRC :
+(*******************************************************************************************************
+Description			:	EtherCAT Slaves Address information
+Supported terminals : 	EL6900, EL6910
+Date 				:	25.05.2018
+********************************************************************************************************)
+STRUCT
+
+	nEcSlaveFSoEAddr						:UINT;
+	nEcSlaveSerialNumber					:ARRAY[0..1] OF WORD;
+	nEcSlaveProjectCRC						:UINT;
+
+END_STRUCT
+END_TYPE
+(* End *)
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
